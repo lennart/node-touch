@@ -122,9 +122,17 @@ function thenFutimes (fd, options, cb) {
 
   var a = parseInt(options.atime / 1000, 10)
     , m = parseInt(options.mtime / 1000, 10)
-  return cb
-       ? fs.futimes(fd, a, m, thenFutimescb(fd, options, cb))
-       : thenFutimescb(fd, options)(null, fs.futimesSync(fd, a, m))
+  if (fs.futimes && fs.futimeSync) {
+    return cb
+         ? fs.futimes(fd, a, m, thenFutimescb(fd, options, cb))
+         : thenFutimescb(fd, options)(null, fs.futimesSync(fd, a, m))
+  }
+  else {
+    // This is node < 0.5, we must resort to gracefully fail and NOT SET atime/mtime
+    return cb
+           ? thenFutimescb(fd, options, cb)
+           : thenFutimescb(fd, options)(null)
+  }
 }
 
 function thenFutimescb (fd, options, cb) { return function (er, res) {

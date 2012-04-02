@@ -2,6 +2,12 @@
 
 For all your node touching needs.
 
+__WARNING__: This library depends on `fs.futimes` which has been
+introduced to the `fs` module with the release of __0.6__. To achieve
+some kind of compatibility with prior versions, setting __atime__ and
+__mtime__ is simply omitted. If you need this feature, update your node
+version!
+
 ## CLI Usage:
 
 See `man touch`
